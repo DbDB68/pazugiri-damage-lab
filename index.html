@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>pazugiri 伤害实验台</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow">PAZUGIRI · DAMAGE LAB</div>
+      <h1>伤害实验台</h1>
+      <p>一击一条记录。把出手人、Buff 和乱舞阶段一起记下来，再看差异。</p>
+    </header>
+
+    <section class="stats" aria-label="当前对照">
+      <div class="stat"><span>无 Buff · 粉球 · 窗口内 / 外</span><strong id="raw-ratio">—</strong><small id="raw-detail">等待可对照记录</small></div>
+      <div class="stat"><span>按队伍攻击力校正后</span><strong id="adj-ratio">—</strong><small>暂按伤害与面板攻击力成正比</small></div>
+    </section>
+
+    <section class="panel" aria-labelledby="chart-heading">
+      <div class="section-head"><div><h2 id="chart-heading">每怪伤害</h2><p>每个点代表一次实测，横线代表组内平均。</p></div>
+        <div class="chart-filters"><label>攻击类型<select id="chart-type"><option value="pink">3级粉球</option><option value="green">2级绿球</option><option value="skill">奥义攻击</option><option value="white">4级白球</option><option value="normal">普通连线</option></select></label><label>出手人<select id="chart-actor"><option value="all">全部</option></select></label></div>
+      </div>
+      <div class="chart-scroller"><svg id="chart" role="img" aria-label="按乱舞阶段与 Buff 分组的每怪伤害图"></svg></div>
+      <p id="chart-note" class="hint"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="entry-heading">
+      <div class="section-head"><div><h2 id="entry-heading">录入一次攻击</h2><p>没记下来的条件可以留空或选「未记」。</p></div></div>
+      <form id="entry-form">
+        <div class="form-grid">
+          <label>攻击类型<select name="type" required><option value="pink">3级粉球</option><option value="green">2级绿球</option><option value="skill">奥义攻击</option><option value="white">4级白球</option><option value="normal">普通连线</option></select></label>
+          <label>出手刀剑男士<input name="actor" list="known-actors" placeholder="未记可留空" maxlength="40"><datalist id="known-actors"><option value="压切长谷部"><option value="乱藤四郎"><option value="歌仙兼定"></datalist></label>
+          <label>命中怪数<input name="count" type="number" min="1" max="999" required></label>
+          <label>单次伤害<input name="damage" type="number" min="1" max="999999" required></label>
+          <label>队伍攻击力<input name="attack" type="number" min="1" max="99999" placeholder="未知可留空"></label>
+          <label>阶段<select name="phase"><option value="out">乱舞外</option><option value="in">乱舞内</option></select></label>
+          <label>Buff<select name="buff"><option value="none">无</option><option value="ran">乱藤四郎奥义</option><option value="other">其他</option><option value="unknown">未记</option></select></label>
+          <label>暴击<select name="crit"><option value="no">无</option><option value="yes">有</option><option value="unknown">未记</option></select></label>
+        </div>
+        <div class="actions"><button type="submit" id="save-button" class="primary">加入记录</button><button type="button" id="cancel-button" hidden>取消编辑</button><span id="form-error" role="alert"></span></div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="records-heading">
+      <div class="section-head"><div><h2 id="records-heading">实测记录 <span id="record-count"></span></h2><p>可编辑补充出手人；旧记录没有证据时保持「未记」。</p></div><div class="actions"><button type="button" id="export-button">导出 JSON</button><button type="button" id="import-button">导入 JSON</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></div>
+      <div class="table-wrap"><table><thead><tr><th>攻击</th><th>出手人</th><th>阶段</th><th>Buff</th><th>暴击</th><th>怪</th><th>伤害</th><th>每怪</th><th>队攻</th><th></th></tr></thead><tbody id="records"></tbody></table></div>
+      <p class="hint">内外比值也可能包含 Break 影响，不能直接当成乱舞单独倍率；不同出手人的普通连线需分别比较。</p>
+    </section>
+    <p id="live-result" class="sr-only" aria-live="polite"></p>
+  </main>
+</body>
+</html>
